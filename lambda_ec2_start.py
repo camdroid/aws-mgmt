@@ -9,6 +9,7 @@ def lambda_handler(event, context):
     instances = get_instances()
     existing_instance = ec2.Instance(id='i-0e6a7023f20d1bc63')
     res = existing_instance.start()
+    res = instances
    
     return {
         "version": "1.0",
