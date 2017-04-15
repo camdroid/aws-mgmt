@@ -1,0 +1,1 @@
+Write a script to automatically build the zip file for lambda deployment.
