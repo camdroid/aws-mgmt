@@ -14,7 +14,7 @@ def get_instances():
             names = [tag['Value'] for tag in instance.get('Tags', [])
                     if tag['Key'] == 'Name']
             d = {'instanceId': instance['InstanceId'],
-                 'status': instance['Monitoring']['State']}
+                 'status': instance['State']['Name']}
             if names:
                 instances.setdefault(names[0], []).append(d)
     return instances
@@ -25,7 +25,7 @@ def get_names():
     return list(instances.keys())
 
 
-def get_status():
+def get_status_only():
     instances = get_instances()
     result = {}
     for name in instances.keys():
@@ -39,7 +39,7 @@ def main():
     args = parser.parse_args()
 
     if args.status:
-        result = get_status()
+        result = get_status_only()
     else:
         result = get_instances()
 
