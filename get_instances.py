@@ -1,6 +1,7 @@
 import boto3
 import sys
 import argparse
+import pprint
 
 
 def get_instances():
@@ -10,11 +11,12 @@ def get_instances():
     response = ec2_client.describe_instances()
     for reservation in response['Reservations']:
         for instance in reservation['Instances']:
-            names = [tag['Value'] for tag in instance['Tags']
+            names = [tag['Value'] for tag in instance.get('Tags', [])
                     if tag['Key'] == 'Name']
             d = {'instanceId': instance['InstanceId'],
                  'status': instance['Monitoring']['State']}
-            instances.setdefault(names[0], []).append(d)
+            if names:
+                instances.setdefault(names[0], []).append(d)
     return instances
 
 
@@ -39,8 +41,10 @@ def main():
     if args.status:
         result = get_status()
     else:
-        result = get_instances(status=args.status)
-    print(result)
+        result = get_instances()
+
+    pp = pprint.PrettyPrinter(indent=4)
+    pp.pprint(result)
 
 
 if __name__ == '__main__':
