@@ -1,0 +1,19 @@
+---
+  - name: Provision EC2 instance
+    hosts: localhost
+    connection: local
+    # strategy: debug
+    tasks:
+      - debug:
+          msg: "Testing"
+      - name: Start a new EC2 instance
+        local_action: ec2
+                      instance_type='t2.nano'
+                      image='ami-0927801f'
+                      region='us-east-1'
+                      keypair='charon_pem'
+                      wait=true
+                      count=1
+        register: ec2
+      - debug:
+          msg: "Testing complete"
