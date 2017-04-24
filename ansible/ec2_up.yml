@@ -4,16 +4,21 @@
     connection: local
     # strategy: debug
     tasks:
-      - debug:
-          msg: "Testing"
       - name: Start a new EC2 instance
-        local_action: ec2
-                      instance_type='t2.nano'
-                      image='ami-0927801f'
-                      region='us-east-1'
-                      keypair='charon_pem'
-                      wait=true
-                      count=1
+        ec2:
+          instance_type: 't2.nano'
+          image: 'ami-0927801f'
+          region: 'us-east-1'
+          instance_tags:
+              Name: '{{ name }}'
+          keypair: 'charon_pem'
+          group: 'ssh_only'
+          wait: true
+          count: 1
         register: ec2
-      - debug:
-          msg: "Testing complete"
+      - name: Add instance to ssh config
+        lineinfile: dest='~/.ssh/config'
+                    regexp="{{ name }}"
+                    line="\nHost {{ name }}\n\tHostName {{ ec2.instances[0].public_ip }}\n\tUser ec2-user\n\tIdentityFile ~/.ssh/charon_pem.pem"
+                    state="present"
+                    create=true
