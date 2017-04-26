@@ -34,6 +34,7 @@ if __name__ == '__main__':
     parser.add_argument('--name', required=False)
     args = parser.parse_args()
 
+    global name
     if args.name:
         name = args.name
     lambda_handler({}, {})
